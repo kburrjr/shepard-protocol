@@ -123,6 +123,28 @@ contract ShepardIBOE is ERC721, ERC721URIStorage, Ownable {
     function getIBOERecord(uint256 tokenId) external view returns (IBOERecord memory) {
         return iboeRecords[tokenId];
     }
+
+    /**
+     * @notice Soul-Bound Token Override - Prevents transfers
+     * @dev IBOE NFTs are non-transferable per UCC Article 12 Control Requirements
+     * Only minting (from address(0)) and burning (to address(0)) are permitted
+     * This ensures the IBOE remains bound to the original holder until redemption
+     */
+    function _update(
+        address to,
+        uint256 tokenId,
+        address auth
+    ) internal override(ERC721) returns (address) {
+        address from = _ownerOf(tokenId);
+        
+        // Allow minting (from == address(0)) and burning (to == address(0))
+        // Block all other transfers - Soul-Bound Token
+        if (from != address(0) && to != address(0)) {
+            revert("SHEPARD: Soul-Bound Token - Transfer not permitted");
+        }
+        
+        return super._update(to, tokenId, auth);
+    }
     
     // Required overrides
     function tokenURI(uint256 tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory) {
