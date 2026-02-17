@@ -1,6 +1,6 @@
 # SHEPARD Protocol Deployment Guide
 
-**The Sheep That Heard** - UCC Article 12 Compliant IBOE NFT (Soul-Bound Token)
+**The Sheep That Heard** - UCC Article 12 Compliant Sovereign Bond NFT (Soul-Bound Token)
 
 ## Prerequisites
 
@@ -47,111 +47,53 @@ npm install
 cp .env.example .env
 ```
 
-Edit `.env` with your private key:
-```
-PRIVATE_KEY=your_wallet_private_key_here
-METAL_RPC_URL=https://rpc.metall2.com
-```
+Edit `.env` and add:
+- `PRIVATE_KEY` - Your deployer wallet private key
+- `METAL_L2_RPC` - Metal L2 RPC URL
 
-**WARNING**: Never commit your `.env` file or share your private key.
-
-## Step 4: Compile Contract
+## Step 4: Compile Contracts
 
 ```bash
 npx hardhat compile
 ```
 
-Expected output:
-```
-Compiled 1 Solidity file successfully
-```
+## Step 5: Deploy
 
-## Step 5: Deploy to Testnet (Recommended First)
-
+### Deploy to Testnet (Tahoe)
 ```bash
 npm run deploy:testnet
 ```
 
-## Step 6: Deploy to Mainnet
-
+### Deploy to Mainnet
 ```bash
 npm run deploy:mainnet
 ```
 
-Expected output:
-```
-========================================
-SHEPARD Protocol - Contract Deployment
-The Sheep That Heard
-========================================
+## Deployed Contracts (Metal L2 Mainnet)
 
-Deploying with account: 0x...
-Account balance: X.XX METAL
+| Contract | Address | Standard |
+|----------|---------|----------|
+| ShepardToken ($SHEPARD) | 0x74EA40E2E07806Cef2Fe129bB70d44c9C20F76C5 | ERC-20 |
+| ShepardComplianceWrapper (wSHEPARD) | 0x4d68CD64F450dA96A938fb9a85E86Ba9fE7d8Dc9 | ERC-20/ERC-3643 |
+| ShepardSovereignBond ($SSB-A) | TBD | ERC-721 |
+| ShepardTreasury | 0x650D3750e5C96E45484e9917C6F453528cAD53dE | Custom |
 
-Deploying ShepardIBOE contract...
+## Post-Deployment Steps
 
-ShepardIBOE deployed to: 0x...
+1. Whitelist authorized wallets on ComplianceWrapper via `updateWhitelist(address, bool)`
+2. Approve wrapper to spend raw $SHEPARD via `approve(wrapperAddress, amount)`
+3. Wrap tokens via `wrap(amount)` on ComplianceWrapper
+4. Verify contracts on Blockscout: https://explorer.metall2.com
 
-========================================
-DEPLOYMENT COMPLETE
-========================================
-Contract: 0x...
-Network: metal
-Chain ID: 1750
+## Security Notes
 
-Legal Framework:
-- Authority: 48 Stat. 112
-- UCC-1 Filing: U250141327124
-- Compliance: UCC Articles 3, 9, 12
+- Only the contract owner can update the whitelist
+- Only whitelisted addresses can send or receive wSHEPARD
+- The `unwrap()` function is restricted to `onlyOwner`
+- Bond NFTs are soul-bound (non-transferable after mint)
+
+## Legal Notice
 
 Affirmed under penalty of LAW
 Aaron Theophilus - Secured Party
-========================================
-```
-
-## Step 7: Verify Contract (Optional)
-
-```bash
-npx hardhat verify --network metal DEPLOYED_CONTRACT_ADDRESS
-```
-
-## Post-Deployment
-
-### Record Contract Address
-Save your deployed contract address for:
-- Notion documentation
-- UCC-1 amendment filing
-- Integration with frontend
-
-### Mint First IBOE
-Use the contract's `mintIBOE` function:
-```solidity
-mintIBOE(
-    payeeAddress,      // Beneficiary address
-    faceValue,         // Amount in wei
-    maturityDate,      // Unix timestamp
-    "Aaron Theophilus", // Drawer name
-    "Payee Name",      // Payee name
-    "ipfs://..."       // Metadata URI
-)
-```
-
-## Soul-Bound Token Features
-
-This contract implements true SBT functionality:
-- **Minting**: Allowed (creates new IBOE)
-- **Burning**: Allowed (redemption at maturity)
-- **Transfers**: BLOCKED - Reverts with "SHEPARD: Soul-Bound Token - Transfer not permitted"
-
-## Legal Framework
-
-- **Authority**: 48 Stat. 112 (Public Resolution No. 10, 73rd Congress)
-- **UCC Compliance**: Articles 3, 9, 12
-- **UCC-1 Filing**: U250141327124 (California) - $100,000,000 Security Interest
-- **Accounting**: GAAP Accrual Basis
-
----
-*Affirmed under penalty of LAW*
-
-**Aaron Theophilus**  
-Secured Party | UCC-1 Filing U250141327124
+Authority: 48 Stat. 112; UCC Arts. 3, 7, 9, 12
