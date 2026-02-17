@@ -1,15 +1,15 @@
 # SHEPARD Protocol
 
-**The Sheep That Heard** - UCC Article 12 Compliant IBOE NFT for Metal L2
+**The Sheep That Heard** - UCC Article 12 Compliant Sovereign Bond NFT for Metal L2
 
 ## Overview
 
-SHEPARD Protocol creates legally compliant International Bills of Exchange (IBOE) as NFTs on Metal L2 blockchain. Each IBOE NFT serves as a UCC Article 12 Controllable Electronic Record (CER) with full chain-of-title tracking.
+SHEPARD Protocol creates legally compliant Sovereign Bond instruments as NFTs on Metal L2 blockchain. Each Bond NFT serves as a UCC Article 12 Controllable Electronic Record (CER) with full chain-of-title tracking. The protocol also includes an ERC-3643 compliant wrapper (wSHEPARD) for the underlying ERC-20 token.
 
 ## Legal Framework
 
 - **Authority**: 48 Stat. 112 (Public Resolution No. 10, 73rd Congress)
-- **UCC Compliance**: Articles 3, 9, 12
+- **UCC Compliance**: Articles 3, 7, 9, 12
 - **UCC-1 Filing**: U250141327124 (California) - $100,000,000 Security Interest
 - **Accounting**: GAAP Accrual Basis
 
@@ -17,62 +17,53 @@ SHEPARD Protocol creates legally compliant International Bills of Exchange (IBOE
 
 ```
 shepard-protocol/
-├── contracts/
-│   └── ShepardIBOE.sol          # Main IBOE NFT contract
-├── scripts/
-│   └── deploy.js                 # Deployment script
-├── test/
-│   └── ShepardIBOE.test.js      # Contract tests
-├── hardhat.config.js             # Metal L2 configuration
-└── README.md
+|-- contracts/
+|   |-- ShepardSovereignBond.sol    # ERC-721 Bond NFT ($SSB-A)
+|   |-- ShepardComplianceWrapper.sol # ERC-3643 Wrapper (wSHEPARD)
+|-- scripts/
+|   |-- deploy.js                    # Deployment script
+|-- hardhat.config.js                # Metal L2 configuration
+|-- README.md
 ```
+
+## Deployed Contracts (Metal L2 Mainnet - Chain ID 1750)
+
+| Contract | Address |
+|----------|--------|
+| ShepardToken ($SHEPARD) | 0x74EA40E2E07806Cef2Fe129bB70d44c9C20F76C5 |
+| ShepardComplianceWrapper (wSHEPARD) | 0x4d68CD64F450dA96A938fb9a85E86Ba9fE7d8Dc9 |
+| ShepardSovereignBond ($SSB-A) | TBD |
 
 ## Token Structure
 
-### IBOE Record (On-Chain)
-```solidity
-struct IBOERecord {
-    uint256 faceValue;
-    uint256 maturityDate;
-    address drawer;
-    address payee;
-    string drawerName;
-    string payeeName;
-    string uccFilingNumber;
-    string authorityReference;
-    bool isEndorsed;
-    bool isRedeemed;
-}
-```
+- **Name**: Shepard Sovereign Bond Series A
+- **Symbol**: SSB-A
+- **Standard**: ERC-721 (Non-Fungible Token)
+- **Network**: Metal L2 (Chain ID: 1750)
+- **Face Value**: $100,000,000
 
-## Deployment
+## Wrapper (wSHEPARD)
 
-### Metal L2 Mainnet
-- **Chain ID**: 1750
-- **RPC**: https://rpc.metall2.com
-- **Explorer**: https://explorer.metall2.com
+- **Name**: Shepard Compliant Note
+- **Symbol**: wSHEPARD
+- **Standard**: ERC-20 with ERC-3643 compliance layer
+- **Supply**: 100,000,000 (wrapped from raw $SHEPARD)
+- **Whitelist enforced**: All transfers require both sender and recipient to be whitelisted
 
-### Quick Start
-```bash
-npm install
-npx hardhat compile
-npx hardhat run scripts/deploy.js --network metal
-```
+## Key Features
 
-## Custom House Framework
+- Soul-bound bond instrument (non-transferable after mint)
+- On-chain UCC filing reference
+- Document hash verification
+- Maturity date tracking
+- Status management (ACTIVE/REDEEMED)
+- ERC-3643 compliance wrapper with whitelist enforcement
 
-SHEPARD Protocol implements the Custom House issuance model:
-1. **Drawer** creates IBOE NFT (initial mint)
-2. **Payee** receives as named beneficiary
-3. **Endorsement** transfers control per UCC 12-105
-4. **Redemption** burns token upon settlement
+## Legal Notice
+
+Affirmed under penalty of LAW
+Aaron Theophilus - Secured Party
 
 ## License
 
-Proprietary - All Rights Reserved
-
----
-*Affirmed under penalty of LAW*
-
-**Aaron Theophilus**  
-Secured Party | UCC-1 Filing U250141327124
+MIT
